@@ -5,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web page test - Loop & Array</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        function nightDayHandler(self){
+            var target = document.querySelector('body');
+            if(self.value === 'night'){
+                target.style.backgroundColor='black';
+                target.style.color='white';
+                this.value = 'day';
+
+                var alist = document.querySelectorAll('a');
+                var i=0;
+                while(i<alist.length){
+                    alist[i].style.color = 'powderblue';
+                    i=i+1;
+                }
+            }else{
+                target.style.backgroundColor='white';
+                target.style.color='black';
+                this.value='night';
+
+                var alist = document.querySelectorAll('a')
+                var i = 0;
+                while(i<alist.length){
+                    alist[i].style.color='blue';
+                    i=i+1;
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1><a href="index.html">Web-4</a></h1>
+    <h1><a href="index.html">Web-5</a></h1>
     <div id = 'grid'>
     <ol>
         <li><a href="1.html">HTML</a></li>
@@ -15,6 +43,7 @@
         <li><a href="3.html">JavaScript</a></li>
         <li><a href="4.html">background-color</a></li>
         <li><a href="5.html">Loof & Array</a></li>
+        <li><a href="6.html">random</a></li>
     </ol>
     <div id = 'article'>
     <script>
@@ -30,33 +59,26 @@
             }
         </script>
     </ul>
+    <script>
+        let min = 1
+let max = 45
+let num = 6
+let length = max - min + 1
+let randomIdx, temp
+let tempArr = []
+
+for (let i = 0; i < length; i++) tempArr[i] = min + i
+for (let minIdx = 0; minIdx < num; minIdx++)
+{
+randomIdx = Math.floor(Math.random() * (length - minIdx)) + minIdx
+
+temp = tempArr[minIdx]
+tempArr[minIdx] = tempArr[randomIdx]
+tempArr[randomIdx] = temp
+}
+    </script>
     </div>
     </div>
-    <input type="button" value="night" onclick="
-    var target = document.querySelector('body');
-    if(this.value === 'night'){
-        target.style.backgroundColor ='black';
-        target.style.color ='white';
-        this.value = 'day';
-
-        var alist = document.querySelectorAll('a');
-        var i = 0;
-        while(i < alist.length){
-            alist[i].style.color = 'powderblue';
-            i = i + 1;
-        }
-    } else {
-        target.style.backgroundColor = 'white';
-        target.style.color = 'black';
-        this.value = 'night';
-
-        var alist = document.querySelectorAll('a');
-        var i = 0;
-        while(i < alist.length){
-            alist[i].style.color = 'blue';
-            i = i + 1;
-        }
-    }
-    ">
+    <input type="button" value="night" onclick="nightDayHandler(this);">
 </body>
 </html>
