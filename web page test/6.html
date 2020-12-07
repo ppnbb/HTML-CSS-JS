@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web page test - Loop & Array</title>
+    <style>
+        .lottoNum, .sign {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            background-color: lightskyblue;
+            position: absolute;
+            top: 100px;
+            font-size: 35px;
+            font-weight: 900px;
+            text-align: center;
+        }
+
+        #num1 {left:200px;}
+        #num2 {left:250px;}
+        #num3 {left:300px;}
+        #num4 {left:350px;}
+        #num5 {left:400px;}
+        #num6 {left:450px;}
+        #num7 {left:550px; background-color: orange;}
+
+        #plusSign {left: 500px; background-color: white; color: gray; font-size: 35px;}
+    </style>
+</head>
+<body>
+    <div class="lottoNum" id="num1"></div>
+    <div class="lottoNum" id="num2"></div>
+    <div class="lottoNum" id="num3"></div>
+    <div class="lottoNum" id="num4"></div>
+    <div class="lottoNum" id="num5"></div>
+    <div class="lottoNum" id="num6"></div>
+    <div class="sign" id="plusSign">+</div>
+    <div class="lottoNum" id="num7"></div>
+
+    <script>
+        const start = 20;
+        const step = 10;
+        let count = 0;
+
+        const arrCircle = [];
+
+        const sevenNumsArr = generateSevenNums();
+
+        for (let i=0; i<7; i++) {
+            let elem = document.getElementById("num" + (i+1));
+            arrCircle.push(elem);
+        }
+
+        const timerHandle = setInterval(timerAction, 100);
+
+        function timerAction() {
+            if (count++ == start || ((count>start) && ( ((count-start)%step) == 0))) {
+                let e = arrCircle.shift();
+                let interval = 100;
+                let threshold = 400;
+                let slowStop = function() {
+                    if (interval>threshold) {
+                        e.innerText = sevenNumsArr.shift();
+                        return;
+                    }
+                    e.innerText = Math.floor(Math.random()*45) + 1;
+                    interval *= 1.9;
+                    setTimeout(slowStop, interval);
+                }
+                setTimeout(slowStop, interval);
+
+                if (arrCircle.length==0) {
+                    clearInterval(timerHandle);
+                    return;
+                }
+            }
+
+            for (let i=0; i<arrCircle.length; i++) {
+                let elem = arrCircle[i];
+
+                elem.innerText = Math.floor(Math.random()*45) + 1;
+            }
+        }
+
+        function generateSevenNums() {
+            let numSet = new Set();
+            while (numSet.size<7) {
+                let num = Math.floor((Math.random()*45)) + 1;
+                numSet.add(num);
+            }
+
+            let resultArr = Array.from(numSet);
+            let bonusNum = resultArr.pop();
+            
+            resultArr.sort(function(a,b) {return a-b;});
+            resultArr.push(bonusNum);
+            return resultArr;
+        }
+    </script>
+</body>
+</html>
