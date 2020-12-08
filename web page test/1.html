@@ -20,7 +20,7 @@
             if(self.value === 'night'){
                 target.style.backgroundColor='black';
                 target.style.color='white';
-                this.value = 'day';
+                self.value = 'day';
 
                 var alist = document.querySelectorAll('a');
                 var i=0;
@@ -31,7 +31,7 @@
             }else{
                 target.style.backgroundColor='white';
                 target.style.color='black';
-                this.value='night';
+                self.value='night';
 
                 var alist = document.querySelectorAll('a')
                 var i = 0;
@@ -64,7 +64,6 @@
     </div>
     </div>
     <input type="button" value="night" onclick="nightDayHandler(this);">
-    <input type="button" value="day" onclick="nightDayHandler(this);">
     <p>
         <!--Start of Tawk.to Script-->
 <script type="text/javascript">
