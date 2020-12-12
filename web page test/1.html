@@ -14,38 +14,42 @@
             color: cornflowerblue;
         }
     </style>
-       <script>
-        function LinksSetColor(color){
-            var alist = document.querySelectorAll('a');
-            var i=0;
-            while(i<alist.length){
-                alist[i].style.color = 'powderblue';
-                i=i+1;
+          <script>
+            var Links = {
+                setColor:function(color){
+                    var alist = document.querySelectorAll('a');
+                    var i=0;
+                    while(i<alist.length){
+                        alist[i].style.color = 'powderblue';
+                        i=i+1;
                 }
             }
-            function BodySetColor(color){
-                document.querySelector('body').style.color = color;
-            }
-            function BodySetBackgroundColor(color){
-                document.querySelector('body').style.backgroundColor = color;
-            }
-        function nightDayHandler(self){
-            var target = document.querySelector('body');
-            if(self.value === 'night'){
-                BodySetBackgroundColor('black');
-                BodySetColor('white');
-                self.value = 'day';
-                
-                LinksSetColor('powerblue');
-            }else{
-                BodySetBackgroundColor('white');
-                BodySetColor('black');
-                self.value='night';
-
-                LinksSetColor('blue');
-            }
         }
-    </script>
+            var Body = {
+                setColor:function(color){
+                    document.querySelector('body').style.color = color;
+                },
+                setBackgroundColor:function(color){
+                    document.querySelector('body').style.backgroundColor = color;
+                }
+            }
+            function nightDayHandler(self){
+                var target = document.querySelector('body');
+                if(self.value === 'night'){
+                    Body.setBackgroundColor('black');
+                    Body.setColor('white');
+                    self.value = 'day';
+                    
+                    Links.setColor('powerblue');
+                }else{
+                    Body.setBackgroundColor('white');
+                    Body.setColor('black');
+                    self.value='night';
+    
+                    Links.setColor('blue');
+                }
+            }
+        </script>
 </head>
 <body>
     <h1><a href="index.html">Web-1</a></h1>
