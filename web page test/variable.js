@@ -7,3 +7,7 @@ console.log(a);
 var name = 'Hi, my name is node.js.';
 var letter = 'hello my name is variable. Whats your name? '+name+' how are u?';
 console.log(letter);
+
+
+var letter = `hello my name is variable. Whats your name? ${name} how are u?`;
+console.log(letter);
