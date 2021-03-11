@@ -24,3 +24,13 @@ console.log('D');
 //배열은 [] 대괄호를 사용하며 ,(콤마)를 사용하여 구분한다.
 //자리 수 = 첫번째 자리 0 부터 시작
 //갯수 = 1 부터 시작
+
+var number = [1,400,12,34]; //대괄호 안에 있는 것을 eliment(원소) 라고 함
+var i = 0;
+var total = 0;
+while(i < number.length){//number.length 를 사용하는 경우, 특정 숫자가 아닌, 원소의 수 대로 출력 가능
+    total = total + number[i];
+    //console.log(number[i]); //각 원소를 한번씩 나열되게 하려면 number(i)
+    i = i + 1;
+}
+console.log(`total : ${total}`);
