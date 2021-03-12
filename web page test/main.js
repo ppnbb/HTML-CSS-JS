@@ -8,9 +8,17 @@ var app = http.createServer(function(request,response){
     var pathname = url.parse(_url, true).pathname;
     if(pathname === '/'){
         if(queryData.id === undefined){
-            fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
-            var title = 'Welcome';
-            var description = 'Hello, Node.js';
+            
+            fs.readdir('../data', function(error, filelist){
+                var title = 'Welcome';
+                var description = 'Hello, Node.js';
+                var list ='<ul>';               
+                var i = 0;
+                while(i < filelist.length){
+                    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</li>`;
+                    i = i + 1;
+                }
+                list = list+'</ul>';
             var template = `
             <!DOCTYPE html>
         <html lang="en">
@@ -34,15 +42,7 @@ var app = http.createServer(function(request,response){
         <body>
             <h1><a href="/">Web-1</a></h1>
             <div id="grid">
-                <ul>
-                <li><a href="/?id=HTML">HTML</a></li>
-                <li><a href="/?id=CSS">CSS</a></li>
-                <li><a href="/?id=JavaScript">JavaScript</a></li>
-                <li><a href="/?id=Background-color">background-color</a></li>
-                <li><a href="/?id=Loof & Array">Loof & Array</a></li>
-                <li><a href="/?id=Random">random</a></li>
-                <li><a href="/?id=Object">Object</a></li>   
-                </ul>
+            ${list}
             <div id="article">
             <h2>${title}</h2>
             <p>${description}</p>
@@ -69,14 +69,25 @@ var app = http.createServer(function(request,response){
             `;
             response.writeHead(200);
             response.end(template);
-        });
+            })
+
         } else {
-            fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
-                var title = queryData.id;
-                var description = data;
-                var template = `
-                <!DOCTYPE html>
-            <html lang="en">
+            fs.readdir('../data', function(error, filelist){
+                var title = 'Welcome';
+                var description = 'Hello, Node.js';
+                var list ='<ul>';               
+                var i = 0;
+                while(i < filelist.length){
+                    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</li>`;
+                    i = i + 1;
+                }
+                list = list+'</ul>';
+                fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
+                    var title = queryData.id;
+                    var description = data;
+                    var template = `
+                    <!DOCTYPE html>
+                    <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,15 +108,7 @@ var app = http.createServer(function(request,response){
             <body>
                 <h1><a href="/">Web-1</a></h1>
                 <div id="grid">
-                    <ul>
-                    <li><a href="/?id=HTML">HTML</a></li>
-                    <li><a href="/?id=CSS">CSS</a></li>
-                    <li><a href="/?id=JavaScript">JavaScript</a></li>
-                    <li><a href="/?id=Background-color">background-color</a></li>
-                    <li><a href="/?id=Loof & Array">Loof & Array</a></li>
-                    <li><a href="/?id=Random">random</a></li>
-                    <li><a href="/?id=Object">Object</a></li>   
-                    </ul>
+                ${list}
                 <div id="article">
                 <h2>${title}</h2>
                 <p>${description}</p>
@@ -133,6 +136,7 @@ var app = http.createServer(function(request,response){
                 response.writeHead(200);
                 response.end(template);
             });
+        });
         }
        
     } else {
