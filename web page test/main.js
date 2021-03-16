@@ -24,9 +24,10 @@ function templeateHTML(title, list, body){
     <script src="colors.js"></script>
 </head>
 <body>
-    <h1><a href="/">Web-1</a></h1>
+    <h1><a href="/">Web</a></h1>
     <div id="grid">
     ${list}
+    <a href="/create">create</a>
     <div id="article">
     ${body}
     </div>
@@ -91,7 +92,25 @@ var app = http.createServer(function(request,response){
             });
         });
         }
-    } else {
+    } else if(pathname === '/create'){
+        fs.readdir('../data', function(error, filelist){
+            var title = 'Web - create';
+            var list = templateList(filelist);
+            var template = templeateHTML(title, list, `
+                <form action="http://localhost:3000/process_create" method="post">
+                    <p><input type="text" name="title" placeholder="title"></p>
+                    <p>
+                        <textarea name="description" placeholder="description"></textarea>
+                    </p>
+                    <p>
+                        <input type="submit">
+                    </p>
+                </form>
+             `);
+            response.writeHead(200);
+            response.end(template);
+        });
+    }else {
         response.writeHead(404);
         response.end('Not found');
     }
