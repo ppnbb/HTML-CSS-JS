@@ -3,7 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 
-function templeateHTML(title, list, body){
+function templeateHTML(title, list, body, control){
     return `
     <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +28,7 @@ function templeateHTML(title, list, body){
     <h1><a href="/">Web</a></h1>
     <div id="grid">
     ${list}
-    <a href="/create">create</a>
+    ${control}
     <div id="article">
     ${body}
     </div>
@@ -76,7 +76,10 @@ var app = http.createServer(function(request,response){
                 var title = 'Welcome';
                 var description = 'Hello, Node.js';
                 var list = templateList(filelist);
-                var template = templeateHTML(title, list, `<h2>${title}</h2>${description}`);
+                var template = templeateHTML(title, list,
+                    `<h2>${title}</h2>${description}`,
+                    `<a href="/create">create</a>`
+                );
                 response.writeHead(200);
                 response.end(template);
             })
@@ -87,7 +90,10 @@ var app = http.createServer(function(request,response){
                     var title = queryData.id;
                     var description = data;
                     var list = templateList(filelist);
-                    var template = templeateHTML(title, list, `<h2>${title}</h2>${description}`);
+                    var template = templeateHTML(title, list,
+                        `<h2>${title}</h2>${description}`,
+                        `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+                        );
                 response.writeHead(200);
                 response.end(template);
             });
@@ -107,7 +113,7 @@ var app = http.createServer(function(request,response){
                         <input type="submit">
                     </p>
                 </form>
-             `);
+             `, '');
             response.writeHead(200);
             response.end(template);
         });
@@ -120,7 +126,7 @@ var app = http.createServer(function(request,response){
             var post = qs.parse(body);
             var title = post.title;
             var description = post.description;
-            fs.writeFile(`../data/${title}`, description, 'utf8', function(err){
+            fs.writeFile(`../data/${title}`, description, 'utf8', function(err){ //파일 생성 기능
                 response.writeHead(302, {Location: `/?id=${title}`}); //200 = 성공, 302 = Redirection 다른 페이지로
                 response.end();   
             })
