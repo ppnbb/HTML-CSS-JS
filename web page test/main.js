@@ -78,21 +78,20 @@ var app = http.createServer(function(request,response){
                 var list = templateList(filelist);
                 var template = templeateHTML(title, list,
                     `<h2>${title}</h2>${description}`,
-                    `<a href="/create">create</a>`
+                    `<a href="/create">create</a>` //Home 화면에서는 create 버튼만 생성
                 );
                 response.writeHead(200);
                 response.end(template);
             })
         } else {
             fs.readdir('../data', function(error, filelist){
-             
                 fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
                     var title = queryData.id;
                     var description = data;
                     var list = templateList(filelist);
                     var template = templeateHTML(title, list,
                         `<h2>${title}</h2>${description}`,
-                        `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+                        `<a href="/create">create</a> <a href="/update?id=${title}">update</a>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
                         );
                 response.writeHead(200);
                 response.end(template);
@@ -104,7 +103,7 @@ var app = http.createServer(function(request,response){
             var title = 'Web - create';
             var list = templateList(filelist);
             var template = templeateHTML(title, list, `
-                <form action="http://localhost:3000/create_process" method="post">
+                <form action="/create_process" method="post">
                     <p><input type="text" name="title" placeholder="title"></p>
                     <p>
                         <textarea name="description" placeholder="description"></textarea>
@@ -132,6 +131,31 @@ var app = http.createServer(function(request,response){
             })
         });
         
+    }else if(pathname === '/update'){
+        fs.readdir('../data', function(error, filelist){
+            fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
+                var title = queryData.id;
+                var description = data;
+                var list = templateList(filelist);
+                var template = templeateHTML(title, list,
+                    `
+                    <form action="/update_process" method="post">
+                    <input type="hidden" name="id" value="${title}">
+                    <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+                    <p>
+                        <textarea name="description" placeholder="description">${description}</textarea>
+                    </p>
+                    <p>
+                        <input type="submit">
+                    </p>
+                </form>
+                    `,
+                    `<a href="/create">create</a> <a href="/update?id=${title}">update</a>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
+                    );
+            response.writeHead(200);
+            response.end(template);
+        });
+    });   
     }else{
         response.writeHead(404);
         response.end('Not found');
