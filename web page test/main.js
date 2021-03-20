@@ -156,6 +156,23 @@ var app = http.createServer(function(request,response){
             response.end(template);
         });
     });   
+    }else if(pathname === '/update_process'){
+        var body = '';
+        request.on('data', function(data){ 
+            body = body + data;
+        });
+        request.on('end', function(){
+            var post = qs.parse(body);
+            var id = post.id;
+            var title = post.title;
+            var description = post.description;
+            fs.rename(`../data/${id}`, `../data/${title}`, function(error){
+                fs.writeFile(`../data/${title}`, description, 'utf8', function(err){ //파일 생성 기능
+                    response.writeHead(302, {Location: `/?id=${title}`}); //200 = 성공, 302 = Redirection 다른 페이지로
+                    response.end();   
+                })
+            })
+        });
     }else{
         response.writeHead(404);
         response.end('Not found');
