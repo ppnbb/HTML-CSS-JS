@@ -91,7 +91,12 @@ var app = http.createServer(function(request,response){
                     var list = templateList(filelist);
                     var template = templeateHTML(title, list,
                         `<h2>${title}</h2>${description}`,
-                        `<a href="/create">create</a> <a href="/update?id=${title}">update</a>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
+                        ` <a href="/create">create</a>
+                          <a href="/update?id=${title}">update</a>
+                          <form action="delete_process" method="post">
+                            <input type="hidden" name="id" value="${title}">
+                            <input type="submit" value="delete">
+                          </form>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
                         );
                 response.writeHead(200);
                 response.end(template);
@@ -173,6 +178,21 @@ var app = http.createServer(function(request,response){
                 })
             })
         });
+    }else if(pathname === '/delete_process'){
+        var body = '';
+        request.on('data', function(data){ 
+            body = body + data;
+        });
+        request.on('end', function(){
+            var post = qs.parse(body);
+            var id = post.id;
+            fs.unlink(`../data/${id}`, function(error){
+                response.writeHead(302, {Location: `/`})
+                response.end();
+            })
+
+        });
+        
     }else{
         response.writeHead(404);
         response.end('Not found');
