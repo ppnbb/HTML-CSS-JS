@@ -2,68 +2,35 @@ var http = require('http');
 var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
-
-function templeateHTML(title, list, body, control){
-    return `
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web page test - ${title}</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .ht{
-            font-size: 25px;
-            color: coral;
+//refactoring > 처음부터 함수를 사용하여 코드를 작성하는 것은 어렵기 때문에 코드 작성 후 유지보수가 쉽도록 정리정돈 > 함수, 배열, 객체화
+var template = {
+    HTML:function(title, list, body, control){
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>WEB1 - ${title}</title>
+            <meta charset="UTF-8">
+        </head>
+        <body>
+            <h1><a href="/">Web</a></h1>
+            ${list}
+            ${control}
+            ${body}
+            </body>
+            </html>
+        `;
+    }, list:function(filelist){
+        var list ='<ul>';               
+        var i = 0;
+        while(i < filelist.length){
+            list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</li>`;
+            i = i + 1;
         }
-        #ml{
-            color: cornflowerblue;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="colors.js"></script>
-</head>
-<body>
-    <h1><a href="/">Web</a></h1>
-    <div id="grid">
-    ${list}
-    ${control}
-    <div id="article">
-    ${body}
-    </div>
-    </div>
-    <input type="button" value="night" onclick="nightDayHandler(this);">
-    <p>
-        <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/5fb7536ba1d54c18d8eb808b/default';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-    </p>
-</body>
-</html>
-    `;
-}
-function templateList(filelist){
-    var list ='<ul>';               
-    var i = 0;
-    while(i < filelist.length){
-        list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</li>`;
-        i = i + 1;
+        list = list+'</ul>';
+        return list;
     }
-    list = list+'</ul>';
-    return list;
 }
-
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
@@ -71,25 +38,24 @@ var app = http.createServer(function(request,response){
     var pathname = url.parse(_url, true).pathname;
     if(pathname === '/'){
         if(queryData.id === undefined){
-            
             fs.readdir('../data', function(error, filelist){
                 var title = 'Welcome';
                 var description = 'Hello, Node.js';
-                var list = templateList(filelist);
-                var template = templeateHTML(title, list,
+                var list = template.list(filelist);
+                var html = template.HTML(title, list,
                     `<h2>${title}</h2>${description}`,
                     `<a href="/create">create</a>` //Home 화면에서는 create 버튼만 생성
                 );
                 response.writeHead(200);
-                response.end(template);
-            })
+                response.end(html);
+            });
         } else {
             fs.readdir('../data', function(error, filelist){
                 fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
                     var title = queryData.id;
                     var description = data;
-                    var list = templateList(filelist);
-                    var template = templeateHTML(title, list,
+                    var list = template.list(filelist);
+                    var html = template.HTML(title, list,
                         `<h2>${title}</h2>${description}`,
                         ` <a href="/create">create</a>
                           <a href="/update?id=${title}">update</a>
@@ -99,15 +65,15 @@ var app = http.createServer(function(request,response){
                           </form>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
                         );
                 response.writeHead(200);
-                response.end(template);
+                response.end(html);
             });
         });
         }
     } else if(pathname === '/create'){
         fs.readdir('../data', function(error, filelist){
             var title = 'Web - create';
-            var list = templateList(filelist);
-            var template = templeateHTML(title, list, `
+            var list = template.list(filelist);
+            var html = template.HTML(title, list, `
                 <form action="/create_process" method="post">
                     <p><input type="text" name="title" placeholder="title"></p>
                     <p>
@@ -119,7 +85,7 @@ var app = http.createServer(function(request,response){
                 </form>
              `, '');
             response.writeHead(200);
-            response.end(template);
+            response.end(html);
         });
     }else if(pathname === '/create_process'){
         var body = '';
@@ -141,8 +107,8 @@ var app = http.createServer(function(request,response){
             fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
                 var title = queryData.id;
                 var description = data;
-                var list = templateList(filelist);
-                var template = templeateHTML(title, list,
+                var list = template.list(filelist);
+                var html = template.HTML(title, list,
                     `
                     <form action="/update_process" method="post">
                     <input type="hidden" name="id" value="${title}">
@@ -158,7 +124,7 @@ var app = http.createServer(function(request,response){
                     `<a href="/create">create</a> <a href="/update?id=${title}">update</a>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
                     );
             response.writeHead(200);
-            response.end(template);
+            response.end(html);
         });
     });   
     }else if(pathname === '/update_process'){
