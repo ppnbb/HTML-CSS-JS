@@ -3,6 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('../lib/template.js');
+var path = require('path');
 //refactoring > 처음부터 함수를 사용하여 코드를 작성하는 것은 어렵기 때문에 코드 작성 후 유지보수가 쉽도록 정리정돈 > 함수, 배열, 객체화
 
 var app = http.createServer(function(request,response){
@@ -24,7 +25,9 @@ var app = http.createServer(function(request,response){
             });
         } else {
             fs.readdir('../data', function(error, filelist){
-                fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
+                var filteredId = path.parse(queryData.id).base;
+                var filteredId = path.parse(queryData.id).base;
+                fs.readFile(`../data/${filteredId}`,'utf8', function(err, data){
                     var title = queryData.id;
                     var description = data;
                     var list = template.list(filelist);
@@ -77,7 +80,8 @@ var app = http.createServer(function(request,response){
         
     }else if(pathname === '/update'){
         fs.readdir('../data', function(error, filelist){
-            fs.readFile(`../data/${queryData.id}`,'utf8', function(err, data){
+            var filteredId = path.parse(queryData.id).base;
+            fs.readFile(`../data/${filteredId}`,'utf8', function(err, data){
                 var title = queryData.id;
                 var description = data;
                 var list = template.list(filelist);
@@ -125,7 +129,8 @@ var app = http.createServer(function(request,response){
         request.on('end', function(){
             var post = qs.parse(body);
             var id = post.id;
-            fs.unlink(`../data/${id}`, function(error){
+            var filteredId = path.parse(id).base;
+            fs.unlink(`../data/${filteredId}`, function(error){
                 response.writeHead(302, {Location: `/`})
                 response.end();
             })
