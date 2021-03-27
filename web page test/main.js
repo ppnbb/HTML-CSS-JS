@@ -4,6 +4,7 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('../lib/template.js');
 var path = require('path');
+var sanitizeHtml = require('../main/node_modules/sanitize-html');
 //refactoring > 처음부터 함수를 사용하여 코드를 작성하는 것은 어렵기 때문에 코드 작성 후 유지보수가 쉽도록 정리정돈 > 함수, 배열, 객체화
 
 var app = http.createServer(function(request,response){
@@ -26,17 +27,19 @@ var app = http.createServer(function(request,response){
         } else {
             fs.readdir('../data', function(error, filelist){
                 var filteredId = path.parse(queryData.id).base;
-                var filteredId = path.parse(queryData.id).base;
-                fs.readFile(`../data/${filteredId}`,'utf8', function(err, data){
+                fs.readFile(`../data/${filteredId}`,'utf8', function(err, description){
                     var title = queryData.id;
-                    var description = data;
+                    var sanitizedTitle = sanitizeHtml(title);
+                    var sanitizedDescription = sanitizeHtml(description, {
+                        allowedTags:['h1']
+                    });
                     var list = template.list(filelist);
-                    var html = template.HTML(title, list,
-                        `<h2>${title}</h2>${description}`,
+                    var html = template.HTML(sanitizedTitle, list,
+                        `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
                         ` <a href="/create">create</a>
-                          <a href="/update?id=${title}">update</a>
+                          <a href="/update?id=${sanitizedTitle}">update</a>
                           <form action="delete_process" method="post">
-                            <input type="hidden" name="id" value="${title}">
+                            <input type="hidden" name="id" value="${sanitizedTitle}">
                             <input type="submit" value="delete">
                           </form>` //홈페이지 외 다른 페이지에서는 수정 버튼 생성, 주소(?id=)는 각 페이지 타이틀 사용
                         );
